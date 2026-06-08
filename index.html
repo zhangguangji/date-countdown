@@ -6,108 +6,90 @@
 <title>倒数日 · 重要日子提醒</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { 
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  min-height: 100vh; font-family: 'PingFang SC','Microsoft YaHei',sans-serif;
-  color: #fff; padding: 20px;
-  -webkit-tap-highlight-color: transparent;
-}
-.container { max-width: 500px; margin: 0 auto; }
+body { background:linear-gradient(135deg,#0f0c29,#302b63,#24243e); min-height:100vh; font-family:'PingFang SC','Microsoft YaHei',sans-serif; color:#fff; padding:20px; -webkit-tap-highlight-color:transparent; }
+.container { max-width:500px; margin:0 auto; }
 
-h1 { text-align:center; font-size: 26px; margin: 20px 0 6px; color: #e0e0ff; }
-.subtitle { text-align:center; color: #888; font-size: 13px; margin-bottom: 24px; }
+/* Login */
+#loginScreen { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(5,5,20,0.97); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+#loginScreen h1 { font-size:28px; color:#e0e0ff; margin-bottom:4px; }
+#loginScreen .sub { color:#888; font-size:13px; margin-bottom:20px; }
+#loginScreen input { width:260px; padding:14px 16px; border-radius:12px; border:2px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.08); color:#fff; font-size:16px; outline:none; text-align:center; transition:border 0.2s; }
+#loginScreen input:focus { border-color:#7c4dff; }
+#loginScreen button { margin-top:12px; padding:14px 50px; border-radius:12px; border:none; background:linear-gradient(135deg,#7c4dff,#448aff); color:#fff; font-size:17px; font-weight:bold; cursor:pointer; transition:all 0.2s; }
+#loginScreen button:active { transform:scale(0.97); }
+#loginScreen .error { color:#ff4444; font-size:13px; margin-top:6px; min-height:20px; }
+#loginScreen .player-list { margin-top:16px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:300px; }
+#loginScreen .player-tag { padding:8px 16px; border-radius:20px; border:1px solid rgba(255,255,255,0.2); color:#aaa; font-size:14px; cursor:pointer; transition:all 0.2s; background:rgba(255,255,255,0.05); }
+#loginScreen .player-tag:hover { border-color:#7c4dff; color:#7c4dff; background:rgba(124,77,255,0.1); }
+#loginScreen .hint { color:#666; font-size:12px; margin-top:14px; }
+
+/* Header */
+.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.header h1 { font-size:22px; color:#e0e0ff; }
+.header .user-info { display:flex; align-items:center; gap:8px; }
+.header .user-tag { font-size:12px; color:#7c4dff; background:rgba(124,77,255,0.15); padding:4px 10px; border-radius:12px; }
+.header .logout-btn { font-size:11px; color:#666; background:rgba(255,255,255,0.05); border:none; padding:4px 10px; border-radius:8px; cursor:pointer; }
+.subtitle { text-align:center; color:#888; font-size:13px; margin-bottom:20px; }
 
 /* Add form */
-.add-card {
-  background: rgba(255,255,255,0.06); border-radius: 16px; padding: 20px;
-  border: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;
-}
-.add-card input, .add-card button {
-  width: 100%; padding: 14px 16px; border-radius: 12px; border: none;
-  font-size: 15px; font-family: inherit; margin-bottom: 10px;
-}
-.add-card input {
-  background: rgba(255,255,255,0.08); color: #fff; outline: none;
-  border: 2px solid rgba(255,255,255,0.1); transition: border 0.2s;
-}
-.add-card input:focus { border-color: #7c4dff; }
-.add-card input[type="date"] {
-  color-scheme: dark; -webkit-appearance: none;
-}
-.add-card button {
-  background: linear-gradient(135deg, #7c4dff, #448aff);
-  color: #fff; font-weight: bold; cursor: pointer;
-  font-size: 16px; transition: transform 0.15s, box-shadow 0.15s;
-  margin-bottom: 0;
-}
-.add-card button:active { transform: scale(0.97); }
+.add-card { background:rgba(255,255,255,0.06); border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,0.08); margin-bottom:20px; }
+.add-card input,.add-card button { width:100%; padding:14px 16px; border-radius:12px; border:none; font-size:15px; font-family:inherit; margin-bottom:10px; }
+.add-card input { background:rgba(255,255,255,0.08); color:#fff; outline:none; border:2px solid rgba(255,255,255,0.1); }
+.add-card input:focus { border-color:#7c4dff; }
+.add-card input[type="date"] { color-scheme:dark; }
+.add-card button { background:linear-gradient(135deg,#7c4dff,#448aff); color:#fff; font-weight:bold; cursor:pointer; font-size:16px; margin-bottom:0; }
+.add-card button:active { transform:scale(0.97); }
 
-/* Event list */
-.event-list { display: flex; flex-direction: column; gap: 12px; }
-
-.event-card {
-  background: rgba(255,255,255,0.05); border-radius: 14px; padding: 16px 20px;
-  border: 1px solid rgba(255,255,255,0.06);
-  display: flex; justify-content: space-between; align-items: center;
-  transition: all 0.2s; cursor: pointer; position: relative;
-}
-.event-card:hover { background: rgba(255,255,255,0.08); }
-
-.event-info { flex: 1; min-width: 0; }
-.event-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
-.event-date { font-size: 12px; color: #999; }
-.event-count { text-align: right; flex-shrink: 0; margin-left: 12px; }
-.count-number { font-size: 28px; font-weight: bold; line-height: 1; }
-.count-label { font-size: 11px; margin-top: 2px; }
-
-/* Color themes */
-.theme-future .count-number { color: #4fc3f7; }
-.theme-future .count-label { color: #4fc3f7; }
-.theme-recent .count-number { color: #ffd740; }
-.theme-recent .count-label { color: #ffd740; }
-.theme-past .count-number { color: #69f0ae; }
-.theme-past .count-label { color: #69f0ae; }
-.theme-today .count-number { color: #ff4081; font-size: 32px !important; }
-.theme-today .count-label { color: #ff4081; }
-.theme-today { border-color: rgba(255,64,129,0.3) !important; }
-
-/* Today highlight bar */
-.today-bar {
-  text-align: center; padding: 12px; margin-bottom: 16px;
-  background: rgba(255,64,129,0.1); border-radius: 10px;
-  border: 1px solid rgba(255,64,129,0.2); display: none;
-}
-.today-bar .today-text { font-size: 15px; color: #ff4081; font-weight: bold; }
-
-/* Delete button */
-.event-delete {
-  position: absolute; top: 8px; right: 8px;
-  width: 24px; height: 24px; border-radius: 50%;
-  background: rgba(255,255,255,0.1); border: none; color: #888;
-  font-size: 12px; cursor: pointer; display: none;
-  align-items: center; justify-content: center; line-height: 1;
-}
-.event-card:hover .event-delete { display: flex; }
-.event-delete:hover { background: rgba(255,68,68,0.3); color: #ff4444; }
-.event-delete:active { transform: scale(0.9); }
-
-/* Empty state */
-.empty-state { text-align: center; padding: 40px 20px; color: #666; }
-.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-.empty-state p { font-size: 14px; line-height: 1.8; }
-.empty-state .example { color: #888; font-size: 12px; margin-top: 8px; }
-
-/* Mobile tweaks */
-@media (max-width: 400px) {
-  body { padding: 12px; }
-  h1 { font-size: 22px; }
-  .count-number { font-size: 22px; }
-}
+/* Events */
+.event-list { display:flex; flex-direction:column; gap:12px; }
+.event-card { background:rgba(255,255,255,0.05); border-radius:14px; padding:16px 20px; border:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center; transition:all 0.2s; position:relative; }
+.event-card:hover { background:rgba(255,255,255,0.08); }
+.event-info { flex:1; min-width:0; }
+.event-title { font-size:16px; font-weight:bold; margin-bottom:4px; }
+.event-date { font-size:12px; color:#999; }
+.event-count { text-align:right; flex-shrink:0; margin-left:12px; }
+.count-number { font-size:28px; font-weight:bold; line-height:1; }
+.count-label { font-size:11px; margin-top:2px; }
+.theme-future .count-number,.theme-future .count-label { color:#4fc3f7; }
+.theme-recent .count-number,.theme-recent .count-label { color:#ffd740; }
+.theme-past .count-number,.theme-past .count-label { color:#69f0ae; }
+.theme-today .count-number { color:#ff4081; font-size:32px !important; }
+.theme-today .count-label { color:#ff4081; }
+.theme-today { border-color:rgba(255,64,129,0.3) !important; }
+.today-bar { text-align:center; padding:12px; margin-bottom:16px; background:rgba(255,64,129,0.1); border-radius:10px; border:1px solid rgba(255,64,129,0.2); display:none; }
+.today-bar .today-text { font-size:15px; color:#ff4081; font-weight:bold; }
+.event-delete { position:absolute; top:8px; right:8px; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,0.1); border:none; color:#888; font-size:13px; cursor:pointer; display:none; align-items:center; justify-content:center; }
+.event-card:hover .event-delete { display:flex; }
+.event-delete:hover { background:rgba(255,68,68,0.3); color:#ff4444; }
+.event-delete:active { transform:scale(0.85); }
+.empty-state { text-align:center; padding:40px 20px; color:#666; }
+.empty-state .icon { font-size:48px; margin-bottom:12px; }
+.empty-state p { font-size:14px; line-height:1.8; }
+@media (max-width:400px){ body{padding:12px} .count-number{font-size:22px} }
 </style>
 </head>
 <body>
-<div class="container">
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
   <h1>📅 倒数日</h1>
+  <div class="sub">记录每一个重要的日子</div>
+  <input type="text" id="loginUser" placeholder="输入你的昵称" maxlength="12" autocomplete="off">
+  <div class="error" id="loginError"></div>
+  <button onclick="startApp()">⚡ 进入</button>
+  <div class="player-list" id="playerList"></div>
+  <div class="hint">输入昵称即可开始，数据独立保存</div>
+</div>
+
+<!-- MAIN APP -->
+<div class="container" id="mainApp" style="display:none">
+  <div class="header">
+    <h1>📅 倒数日</h1>
+    <div class="user-info">
+      <span class="user-tag" id="userTag"></span>
+      <button class="logout-btn" onclick="doLogout()">切换</button>
+    </div>
+  </div>
   <div class="subtitle">记录每一个重要的日子</div>
 
   <div class="today-bar" id="todayBar"></div>
@@ -118,183 +100,141 @@ h1 { text-align:center; font-size: 26px; margin: 20px 0 6px; color: #e0e0ff; }
     <button onclick="addEvent()">➕ 添加</button>
   </div>
 
-  <div class="event-list" id="eventList">
-    <div class="empty-state">
-      <div class="icon">📝</div>
-      <p>还没有任何记录</p>
-      <p class="example">试试添加：<br>💍 结婚纪念日<br>🎂 生日<br>🏠 搬家日期<br>✈️ 旅行倒计时</p>
-    </div>
-  </div>
+  <div class="event-list" id="eventList"></div>
 </div>
 
 <script>
-// ==================== DATA ====================
-const STORAGE_KEY = 'countdown_events';
-let events = [];
+// ==================== ACCOUNT SYSTEM ====================
+let currentUser = null;
+const PLAYERS_KEY = 'cd_players';
 
-function load() {
-  try { events = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch(e) { events = []; }
-  // Sort: upcoming first, then past
-  events.sort((a,b) => new Date(a.date) - new Date(b.date));
+function getPlayerList() {
+  try { return JSON.parse(localStorage.getItem(PLAYERS_KEY)||'[]'); } catch(e) { return []; }
+}
+function savePlayerList(list) {
+  localStorage.setItem(PLAYERS_KEY, JSON.stringify(list));
+}
+function renderPlayerList() {
+  const players = getPlayerList();
+  const el = document.getElementById('playerList');
+  if(players.length===0){ el.innerHTML=''; return; }
+  el.innerHTML = players.map(p => `<div class="player-tag" onclick="selectPlayer('${escAttr(p)}')">👤 ${escAttr(p)}</div>`).join('');
+}
+function selectPlayer(name) {
+  document.getElementById('loginUser').value = name;
+  startApp();
+}
+function startApp() {
+  const name = document.getElementById('loginUser').value.trim();
+  if(!name){ document.getElementById('loginError').textContent='请输入昵称'; return; }
+  if(name.length>12){ document.getElementById('loginError').textContent='最多12字符'; return; }
+  const players = getPlayerList();
+  if(!players.includes(name)){ players.push(name); savePlayerList(players); }
+  login(name);
+}
+function login(name) {
+  currentUser = name;
+  localStorage.setItem('cd_last_user', name);
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('userTag').textContent = '👤 '+name;
+  document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
+  loadEvents();
+  renderEvents();
+}
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem('cd_last_user');
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  renderPlayerList();
 }
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+// ==================== EVENTS DATA ====================
+function storageKey() { return 'cd_events_'+currentUser; }
+let events = [];
+
+function loadEvents() {
+  try { events = JSON.parse(localStorage.getItem(storageKey())||'[]'); } catch(e) { events = []; }
+  events.sort((a,b) => new Date(a.date)-new Date(b.date));
+}
+function saveEvents() {
+  localStorage.setItem(storageKey(), JSON.stringify(events));
 }
 
 // ==================== RENDER ====================
-function getDayDiff(targetDate) {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const target = new Date(targetDate);
-  target.setHours(0,0,0,0);
-  const diffMs = target.getTime() - today.getTime();
-  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+function getDayDiff(d) {
+  const now=new Date(), today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const t=new Date(d); t.setHours(0,0,0,0);
+  return Math.floor((t.getTime()-today.getTime())/86400000);
 }
-
-function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,'0');
-  const day = String(d.getDate()).padStart(2,'0');
-  const weekdays = ['日','一','二','三','四','五','六'];
-  return `${y}年${m}月${day}日 星期${weekdays[d.getDay()]}`;
+function formatDate(d) {
+  const dt=new Date(d), w=['日','一','二','三','四','五','六'];
+  return `${dt.getFullYear()}年${String(dt.getMonth()+1).padStart(2,'0')}月${String(dt.getDate()).padStart(2,'0')}日 星期${w[dt.getDay()]}`;
 }
+function escAttr(s){ return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function escHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
-function render() {
+function renderEvents() {
   const list = document.getElementById('eventList');
   const todayBar = document.getElementById('todayBar');
   
-  if (events.length === 0) {
-    list.innerHTML = `<div class="empty-state">
-      <div class="icon">📝</div>
-      <p>还没有任何记录</p>
-      <p class="example">试试添加：<br>💍 结婚纪念日<br>🎂 生日<br>🏠 搬家日期<br>✈️ 旅行倒计时</p>
-    </div>`;
+  if(!events.length) {
+    list.innerHTML = `<div class="empty-state"><div class="icon">📝</div><p>还没有任何记录</p></div>`;
     todayBar.style.display = 'none';
     return;
   }
+  const todayEvts = events.filter(e=>getDayDiff(e.date)===0);
+  if(todayEvts.length) {
+    todayBar.style.display='block';
+    todayBar.innerHTML=`<span class="today-text">🎉 今天！</span> ${todayEvts.map(e=>escHtml(e.title)).join('、')}`;
+  } else { todayBar.style.display='none'; }
 
-  // Check for today events
-  const todayEvents = events.filter(e => getDayDiff(e.date) === 0);
-  if (todayEvents.length > 0) {
-    todayBar.style.display = 'block';
-    todayBar.innerHTML = `<span class="today-text">🎉 今天！</span> ${todayEvents.map(e=>e.title).join('、')}`;
-  } else {
-    todayBar.style.display = 'none';
-  }
-
-  list.innerHTML = events.map((e, i) => {
-    const diff = getDayDiff(e.date);
-    let theme, numText, labelText;
-    
-    if (diff === 0) {
-      theme = 'theme-today';
-      numText = '🎉';
-      labelText = '就是今天！';
-    } else if (diff > 0) {
-      theme = 'theme-future';
-      numText = diff;
-      labelText = '天后';
-    } else {
-      const absDiff = Math.abs(diff);
-      if (absDiff <= 30) {
-        theme = 'theme-recent';
-      } else {
-        theme = 'theme-past';
-      }
-      
-      if (absDiff === 1) {
-        numText = '1';
-        labelText = '天前';
-      } else if (absDiff < 30) {
-        numText = absDiff;
-        labelText = '天前';
-      } else if (absDiff < 365) {
-        const months = Math.floor(absDiff / 30);
-        numText = months;
-        labelText = '个月前';
-      } else {
-        const years = Math.floor(absDiff / 365);
-        const remainDays = absDiff % 365;
-        const remainMonths = Math.floor(remainDays / 30);
-        if (years === 1 && remainMonths === 0) {
-          numText = '1';
-          labelText = '年前';
-        } else if (remainMonths === 0) {
-          numText = years;
-          labelText = '年前';
-        } else {
-          numText = years + '年' + remainMonths + '个月';
-          labelText = '前';
-        }
+  list.innerHTML = events.map((e,i)=>{
+    const diff=getDayDiff(e.date);
+    let theme, num, label;
+    if(diff===0){ theme='theme-today'; num='🎉'; label='就是今天！'; }
+    else if(diff>0){ theme='theme-future'; num=diff; label='天后'; }
+    else {
+      const d=Math.abs(diff);
+      theme=d<=30?'theme-recent':'theme-past';
+      if(d===1){ num='1'; label='天前'; }
+      else if(d<30){ num=d; label='天前'; }
+      else if(d<365){ num=Math.floor(d/30); label='个月前'; }
+      else {
+        const y=Math.floor(d/365), r=d%365, m=Math.floor(r/30);
+        num=m?`${y}年${m}个月`:`${y}`; label=m?'前':'年前';
       }
     }
-    
     return `<div class="event-card ${theme}">
-      <div class="event-info">
-        <div class="event-title">${escHtml(e.title)}</div>
-        <div class="event-date">📅 ${formatDate(e.date)}</div>
-      </div>
-      <div class="event-count">
-        <div class="count-number">${numText}</div>
-        <div class="count-label">${labelText}</div>
-      </div>
-      <button class="event-delete" onclick="event.stopPropagation();deleteEvent(${i})">✕</button>
-    </div>`;
+      <div class="event-info"><div class="event-title">${escHtml(e.title)}</div><div class="event-date">📅 ${formatDate(e.date)}</div></div>
+      <div class="event-count"><div class="count-number">${num}</div><div class="count-label">${label}</div></div>
+      <button class="event-delete" onclick="event.stopPropagation();delEvent(${i})">✕</button></div>`;
   }).join('');
 }
-
-function escHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-
-// ==================== ACTIONS ====================
 function addEvent() {
-  const titleEl = document.getElementById('eventTitle');
-  const dateEl = document.getElementById('eventDate');
-  const title = titleEl.value.trim();
-  const date = dateEl.value;
-  
-  if (!title) { titleEl.focus(); titleEl.style.borderColor = '#ff4444'; setTimeout(()=>titleEl.style.borderColor='', 1500); return; }
-  if (!date) { dateEl.focus(); dateEl.style.borderColor = '#ff4444'; setTimeout(()=>dateEl.style.borderColor='', 1500); return; }
-  
-  events.push({ title, date });
-  events.sort((a,b) => new Date(a.date) - new Date(b.date));
-  save();
-  render();
-  
-  titleEl.value = '';
-  dateEl.value = '';
-  titleEl.focus();
+  const t=document.getElementById('eventTitle').value.trim(), d=document.getElementById('eventDate').value;
+  if(!t||!d) return;
+  events.push({title:t,date:d});
+  events.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  saveEvents(); renderEvents();
+  document.getElementById('eventTitle').value=''; document.getElementById('eventDate').value='';
 }
-
-function deleteEvent(index) {
-  if (confirm(`确定删除「${events[index].title}」吗？`)) {
-    events.splice(index, 1);
-    save();
-    render();
-  }
-}
+function delEvent(i){ events.splice(i,1); saveEvents(); renderEvents(); }
 
 // ==================== INIT ====================
-// Set default date to today
-document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
+document.getElementById('eventTitle').addEventListener('keydown', e=>{ if(e.key==='Enter') addEvent(); });
 
-// Enter key to add
-document.getElementById('eventTitle').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addEvent();
-});
+(function(){
+  const last = localStorage.getItem('cd_last_user');
+  if(last){ login(last); return; }
+  document.getElementById('loginScreen').style.display='flex';
+  renderPlayerList();
+  document.getElementById('loginUser').addEventListener('keydown', e=>{ if(e.key==='Enter') startApp(); });
+})();
 
-load();
-render();
-
-// Auto-refresh at midnight
-const now = new Date();
-const msToMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).getTime() - now.getTime();
-setTimeout(() => { render(); setInterval(render, 86400000); }, msToMidnight);
+// Midnight refresh
+(function(){ const n=new Date(); setTimeout(()=>{ if(currentUser)renderEvents(); setInterval(()=>{if(currentUser)renderEvents();},86400000); },new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n); })();
 </script>
 </body>
 </html>
